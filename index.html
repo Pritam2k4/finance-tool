@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anime Productivity Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Dots&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class', // or 'media'
+      theme: {
+        extend: {
+          fontFamily: {
+            'zen-dots': ['"Zen Dots"', 'cursive'],
+            'inter': ['"Inter"', 'sans-serif'],
+          },
+          colors: {
+            primary: {
+              light: '#8B5CF6', // Violet-500
+              DEFAULT: '#7C3AED', // Violet-600
+              dark: '#6D28D9'  // Violet-700
+            },
+            secondary: {
+              light: '#EC4899', // Pink-500
+              DEFAULT: '#DB2777', // Pink-600
+              dark: '#BE185D'   // Pink-700
+            },
+            background: {
+              light: '#F3F4F6', // Gray-100
+              dark: '#1F2937',  // Gray-800
+              darker: '#111827' // Gray-900
+            },
+            text: {
+              light: '#1F2937', // Gray-800
+              dark: '#F3F4F6',  // Gray-100
+              muted_light: '#6B7280', // Gray-500
+              muted_dark: '#9CA3AF' // Gray-400
+            }
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            },
+            slideInUp: {
+              '0%': { transform: 'translateY(20px)', opacity: '0'},
+              '100%': { transform: 'translateY(0)', opacity: '1'}
+            }
+          },
+          animation: {
+            fadeIn: 'fadeIn 0.5s ease-out',
+            slideInUp: 'slideInUp 0.5s ease-out forwards'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .font-zen-dots {
+      font-family: 'Zen Dots', cursive;
+    }
+    /* Custom scrollbar for webkit browsers */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1F2937; /* dark:bg-gray-800 */
+    }
+    html.light ::-webkit-scrollbar-track {
+      background: #F3F4F6; /* light:bg-gray-100 */
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #7C3AED; /* primary-DEFAULT */
+      border-radius: 10px;
+      border: 2px solid #1F2937; /* dark:bg-gray-800 */
+    }
+    html.light ::-webkit-scrollbar-thumb {
+      border: 2px solid #F3F4F6; /* light:bg-gray-100 */
+    }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.6.1",
+    "@heroicons/react/": "https://esm.sh/@heroicons/react@^2.2.0/",
+    "recharts": "https://esm.sh/recharts@^2.15.3"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-background-light dark:bg-background-darker text-text-light dark:text-text-dark transition-colors duration-300">
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
