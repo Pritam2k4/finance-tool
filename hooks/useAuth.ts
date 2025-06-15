@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { User } from '../types';
 
@@ -13,7 +12,7 @@ interface AuthHookResult {
 
 function useAuth(user: User | null): AuthHookResult {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true); // Check auth status on mount
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const getAuthKey = useCallback(() => user ? `${AUTH_KEY_PREFIX}${user.id}` : '', [user]);
 
@@ -23,14 +22,13 @@ function useAuth(user: User | null): AuthHookResult {
       setIsLoading(false);
       return;
     }
+    
     const authKey = getAuthKey();
     try {
       const token = localStorage.getItem(authKey);
-      if (token === 'authenticated') { // Simple token check
-        setIsAuthenticated(true);
-      } else {
-        setIsAuthenticated(false);
-      }
+      const isValid = token === 'authenticated';
+      setIsAuthenticated(isValid);
+      console.log(`Auth check for ${user.name}: ${isValid ? 'authenticated' : 'not authenticated'}`);
     } catch (error) {
       console.error("Error reading auth status from localStorage:", error);
       setIsAuthenticated(false);
@@ -39,21 +37,30 @@ function useAuth(user: User | null): AuthHookResult {
   }, [user, getAuthKey]);
 
   const login = (password: string): boolean => {
-    if (!user) return false;
+    if (!user) {
+      console.log('No user provided to login');
+      return false;
+    }
+    
+    console.log(`Login attempt for ${user.name} with password: "${password}"`);
+    console.log(`Expected password: "${user.passwordPlain}"`);
+    
     // WARNING: This is insecure plain text password checking. For demo purposes only.
-    // In a real app, use a secure authentication mechanism (e.g., OAuth, hashed passwords with a backend).
     if (password === user.passwordPlain) {
       const authKey = getAuthKey();
       try {
         localStorage.setItem(authKey, 'authenticated');
         setIsAuthenticated(true);
+        console.log(`Login successful for ${user.name}`);
         return true;
       } catch (error) {
         console.error("Error setting auth status in localStorage:", error);
         return false;
       }
+    } else {
+      console.log(`Login failed for ${user.name}: password mismatch`);
+      return false;
     }
-    return false;
   };
 
   const logout = (): void => {
@@ -62,6 +69,7 @@ function useAuth(user: User | null): AuthHookResult {
     try {
       localStorage.removeItem(authKey);
       setIsAuthenticated(false);
+      console.log(`Logout successful for ${user.name}`);
     } catch (error) {
       console.error("Error removing auth status from localStorage:", error);
     }

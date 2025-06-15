@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { User, UserData, DashboardTab, PomodoroSettings, TodoTask, TestScore, Goal, JournalEntry, DailyReflection, PomodoroStat } from '../types';
 import { INITIAL_AKHILESH_DATA, INITIAL_PREETAM_DATA } from '../constants';
@@ -18,7 +17,7 @@ import GoalsManager from '../components/dashboard/GoalsManager';
 import Journal from '../components/dashboard/Journal';
 import AnalyticsSummary from '../components/dashboard/AnalyticsSummary';
 import PomodoroTimer from '../components/dashboard/PomodoroTimer';
-import DailyReflectionLog from '../components/dashboard/DailyReflection'; // Renamed for clarity
+import DailyReflectionLog from '../components/dashboard/DailyReflection';
 
 // Placeholder Icons for Tabs
 const CalendarDaysIcon: React.FC<{ className?: string }> = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-3.75h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" /></svg>;
@@ -29,7 +28,6 @@ const BookOpenIcon: React.FC<{ className?: string }> = ({ className }) => <svg x
 const PresentationChartLineIcon: React.FC<{ className?: string }> = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h12A2.25 2.25 0 0 0 20.25 14.25V3M3.75 14.25m-1.5 0h15M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>;
 const ClockIcon: React.FC<{ className?: string }> = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>;
 
-
 interface UserDashboardPageProps {
   user: User;
 }
@@ -39,10 +37,23 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ user }) => {
   const [userData, setUserData] = useLocalStorage<UserData>(`${user.id}_data`, initialData);
   const { isAuthenticated, login, logout, isLoading: authIsLoading } = useAuth(user);
   const [activeTab, setActiveTab] = useState<DashboardTab>(DashboardTab.Planner);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  useEffect(() => {
+    if (!authIsLoading && !isAuthenticated) {
+      setShowAuthModal(true);
+    } else {
+      setShowAuthModal(false);
+    }
+  }, [isAuthenticated, authIsLoading]);
 
   const handleAuthenticated = () => {
-    // Auth logic handled by useAuth hook, this callback confirms successful auth from modal
-    // Could potentially trigger a data refresh here if not using localStorage directly
+    setShowAuthModal(false);
+  };
+
+  const handleAuthModalClose = () => {
+    // Don't allow closing the modal without authentication
+    // User must authenticate to proceed
   };
 
   const updateUserData = <K extends keyof UserData,>(key: K, value: UserData[K]) => {
@@ -87,13 +98,23 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ user }) => {
     }
   };
 
-
   if (authIsLoading) {
-    return <div className="min-h-screen flex items-center justify-center"><LoadingSpinner text={`Loading ${user.name}'s Dashboard...`} /></div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSpinner text={`Loading ${user.name}'s Dashboard...`} />
+      </div>
+    );
   }
 
   if (!isAuthenticated) {
-    return <AuthModal isOpen={true} onClose={() => {}} onAuthenticated={handleAuthenticated} user={user} />;
+    return (
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={handleAuthModalClose} 
+        onAuthenticated={handleAuthenticated} 
+        user={user} 
+      />
+    );
   }
 
   const tabOptions: { label: string; value: DashboardTab; icon: React.ReactNode }[] = [
