@@ -1,10 +1,9 @@
-
 import React, { useState, ChangeEvent } from 'react';
 import { TestScore } from '../../types';
 import Button from '../common/Button';
 import Input from '../common/Input';
 import ScoreHistoryChart from '../charts/ScoreHistoryChart';
-import { MAX_TEST_ENTRIES } from '../../constants';
+import { MAX_TEST_ENTRIES } from '../../constants.tsx';
 
 
 
